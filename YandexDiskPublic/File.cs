@@ -10,6 +10,7 @@ namespace YandexDiskPublicAPI
         protected readonly Item _rawData;
 
         public string Name => _rawData.name;
+        public int Size => _rawData.size;
 
         public File(Item fileInfo)
         {

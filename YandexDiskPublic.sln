@@ -1,13 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexDiskPublicAPI", "YandexDiskPublic\YandexDiskPublicAPI.csproj", "{1ACCF350-B64D-46C9-908D-E8AD0F8AFB6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{9483E59F-FF58-4D41-8056-1A52641C66BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\GeneralPurposeLibs\Utilities\Utilities.csproj", "{B76D158D-0AD4-4656-848B-2B33E2684E08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\GeneralPurposeLibs\Utilities\Utilities\Utilities.csproj", "{B76D158D-0AD4-4656-848B-2B33E2684E08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexDiskPublicAPIStandard", "YandexDiskPublicAPIStandard\YandexDiskPublicAPIStandard.csproj", "{4C50EDAB-A10B-43AE-9820-7164592DFB4A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ZMisc", "ZMisc", "{CCAD9392-954A-4148-84B1-53BE3689942D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AProject", "AProject", "{BBC936D6-71B5-4466-BAE6-F2964CFCC229}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilitiesStandard", "..\GeneralPurposeLibs\Utilities\UtilitiesStandard\UtilitiesStandard.csproj", "{57F4BD6F-BFA9-4285-AD3D-3460DFD694EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +35,24 @@ Global
 		{B76D158D-0AD4-4656-848B-2B33E2684E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B76D158D-0AD4-4656-848B-2B33E2684E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B76D158D-0AD4-4656-848B-2B33E2684E08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C50EDAB-A10B-43AE-9820-7164592DFB4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C50EDAB-A10B-43AE-9820-7164592DFB4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C50EDAB-A10B-43AE-9820-7164592DFB4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C50EDAB-A10B-43AE-9820-7164592DFB4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57F4BD6F-BFA9-4285-AD3D-3460DFD694EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57F4BD6F-BFA9-4285-AD3D-3460DFD694EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57F4BD6F-BFA9-4285-AD3D-3460DFD694EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57F4BD6F-BFA9-4285-AD3D-3460DFD694EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1ACCF350-B64D-46C9-908D-E8AD0F8AFB6B} = {BBC936D6-71B5-4466-BAE6-F2964CFCC229}
+		{9483E59F-FF58-4D41-8056-1A52641C66BB} = {BBC936D6-71B5-4466-BAE6-F2964CFCC229}
+		{B76D158D-0AD4-4656-848B-2B33E2684E08} = {CCAD9392-954A-4148-84B1-53BE3689942D}
+		{4C50EDAB-A10B-43AE-9820-7164592DFB4A} = {BBC936D6-71B5-4466-BAE6-F2964CFCC229}
+		{57F4BD6F-BFA9-4285-AD3D-3460DFD694EE} = {CCAD9392-954A-4148-84B1-53BE3689942D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CE6049E1-B31E-440D-8085-4005410F0330}

@@ -10,36 +10,35 @@ namespace YandexDiskPublicAPI
 {
     public static class YandexDisk
     {
-        public static Directory List(string directoryId)
+        public static async Task<YandexDiskDirectoryAccessor> ListAsync(string directoryId)
         {
-            var raw = PerformListRequest(directoryId);
+            var raw = await PerformListRequestAsync(directoryId);
 
-            return new Directory(raw);
+            return new YandexDiskDirectoryAccessor(raw);
         }
 
-        internal static RootObject PerformListRequest(string publicKey)
+        internal static async Task<RootObject> PerformListRequestAsync(string publicKey)
         {
             var request = "https://cloud-api.yandex.net/v1/disk/public/resources?public_key=" + HttpUtility.HtmlEncode(publicKey);
-            var answer = Utils.DoGetRequest(request);
-            var graph = JsonConvert.DeserializeObject<RootObject>(answer);
+            var answer = await Utils.DoGetRequestAsync(request);
 
             return JsonConvert.DeserializeObject<RootObject>(answer);
         }
 
-        internal static RootObject PerformListRequest(string publicKey, string path)
+        internal static async Task<RootObject> PerformListRequestAsync(string publicKey, string path)
         {
             var requestTemplate = "https://cloud-api.yandex.net/v1/disk/public/resources?public_key={0}&path={1}";
             var request = string.Format(requestTemplate, HttpUtility.HtmlEncode(publicKey), HttpUtility.UrlPathEncode(path));
-            var answer = Utils.DoGetRequest(request);
+            var answer = await Utils.DoGetRequestAsync(request);
 
             return JsonConvert.DeserializeObject<RootObject>(answer);
         }
 
-        internal static DownloadAnswer PerformDownloadRequest(string publicKey, string path)
+        internal static async Task<DownloadAnswer> PerformDownloadRequestAsync(string publicKey, string path)
         {
             var requestTemplate = "https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={0}&path={1}";
             var request = string.Format(requestTemplate, HttpUtility.HtmlEncode(publicKey), HttpUtility.UrlPathEncode(path));
-            var answer = Utils.DoGetRequest(request);
+            var answer = await Utils.DoGetRequestAsync(request);
 
             return JsonConvert.DeserializeObject<DownloadAnswer>(answer);
         }

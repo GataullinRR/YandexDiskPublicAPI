@@ -49,10 +49,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\GeneralPurposeLibs\Utilities\Utilities.csproj">
-      <Project>{b76d158d-0ad4-4656-848b-2b33e2684e08}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\YandexDiskPublic\YandexDiskPublicAPI.csproj">
       <Project>{1ACCF350-B64D-46C9-908D-E8AD0F8AFB6B}</Project>
       <Name>YandexDiskPublicAPI</Name>
