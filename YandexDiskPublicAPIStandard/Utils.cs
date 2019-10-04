@@ -11,7 +11,8 @@ namespace YandexDiskPublicAPI
 {
     static class Utils
     {
-        public static async Task<string> DoGetRequestAsync(string uri)
+#warning Add cancellation
+        public static async Task<string> DoGetRequestAsync(string uri, System.Threading.CancellationToken cancellation)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
@@ -24,14 +25,15 @@ namespace YandexDiskPublicAPI
             }
         }
 
-        public static async Task<byte[]> DownloadAsync(string url)
+        public static async Task<byte[]> DownloadAsync(string url, System.Threading.CancellationToken cancellation)
         {
             using (var client = new HttpClient())
             {
-                using (var result = await client.GetAsync(url))
+                using (var result = await client.GetAsync(url, cancellation))
                 {
                     if (result.IsSuccessStatusCode)
                     {
+#warning Add cancellation
                         return await result.Content.ReadAsByteArrayAsync();
                     }
                     else
