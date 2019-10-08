@@ -11,26 +11,36 @@ namespace YandexDiskPublicAPI
 {
     public class YandexDiskDirectory : IDirectoryAccessor
     {
+        static readonly PathFormat PATH_FORMAT = new PathFormat("/");
+
         readonly RootObject _rawData;
         readonly string _publicUrl;
+        readonly UPath _path;
 
-        public DirectoryAccess Access => DirectoryAccess.READ_ONLY;
+        public IOAccess Access => IOAccess.READ_ONLY;
         public string Name => _rawData.name;
+
 
         internal YandexDiskDirectory(RootObject raw, string publicUrl)
         {
             _rawData = raw;
             _publicUrl = publicUrl;
+            _path = new UPath(PATH_FORMAT, _rawData.path);
         }
 
-        public async Task DownloadToAsync(IDirectoryAccessor directory, System.Threading.CancellationToken cancellation)
+        public async Task DownloadToAsync(IDirectoryAccessor destinationRootDirectory, System.Threading.CancellationToken cancellation)
         {
+            if (destinationRootDirectory.Access != IOAccess.FULL)
+            {
+                throw new NotSupportedException("Access denied");
+            }
+
             foreach (var fileTask in EnumerateFilesAsync())
             {
                 var file = await fileTask;
-                var destinationFile = await directory.GetFileAsync(new Uri(file.Name, UriKind.Relative), cancellation);
+                var destinationFile = await destinationRootDirectory.GetFileAsync(new UPath(PATH_FORMAT, file.Name), cancellation);
                 using (var destinationFileStream = await destinationFile.OpenAsync(FileOpenMode.NEW, cancellation))
-                using (var fileStream = await file.OpenAsync(FileOpenMode.OPEN, cancellation))
+                using (var fileStream = await file.OpenAsync(FileOpenMode.OPEN_OR_NEW, cancellation))
                 {
                     await fileStream.WriteToAsync(destinationFileStream, cancellation);
                 }
@@ -39,8 +49,9 @@ namespace YandexDiskPublicAPI
             foreach (var innerDir in EnumerateDirectoriesAsync(cancellation))
             {
                 var dir = await innerDir;
-                var destinationDirectoryPath = new Uri(dir._rawData.path.Remove(_rawData.path), UriKind.Relative);
-                var destinationDirectory = await directory.GetDirectoryAsync(destinationDirectoryPath, cancellation);
+                var destinationDirectoryPath = new UPath(PATH_FORMAT, dir._rawData.path.RemoveFirst(_rawData.path));
+                var destinationDirectory = await destinationRootDirectory.GetDirectoryAsync(destinationDirectoryPath, cancellation);
+                await destinationDirectory.EnsureCreatedAsync(cancellation);
                 await dir.DownloadToAsync(destinationDirectory, cancellation);
             }
         }
@@ -50,11 +61,11 @@ namespace YandexDiskPublicAPI
             throw new NotSupportedException("The directory is read only");
         }
 
-        Task<IFileAccessor> IDirectoryAccessor.GetFileAsync(Uri relativePath, System.Threading.CancellationToken cancellation)
+        Task<IFileAccessor> IDirectoryAccessor.GetFileAsync(UPath relativePath, System.Threading.CancellationToken cancellation)
         {
             throw new NotImplementedException();
         }
-        public Task<YandexDiskFile> GetFileAsync(Uri relativePath)
+        public Task<YandexDiskFile> GetFileAsync(UPath relativePath)
         {
             throw new NotImplementedException();
         }
@@ -72,7 +83,7 @@ namespace YandexDiskPublicAPI
         {
             return _rawData._embedded.items
                 .Where(i => i.type == "file")
-                .Select(f => Task.FromResult(new YandexDiskFile(f, this)));
+                .Select(f => Task.FromResult(new YandexDiskFile(f, this, _publicUrl)));
         }
 
         IEnumerable<Task<IDirectoryAccessor>> IDirectoryAccessor.EnumerateDirectoriesAsync(System.Threading.CancellationToken cancellation)
@@ -90,7 +101,7 @@ namespace YandexDiskPublicAPI
             {
                 var localPath = dir.path.Remove(0, _rawData.path.Length);
 
-                yield return GetDirectoryAsync(new Uri(localPath, UriKind.Relative), cancellation);
+                yield return GetDirectoryAsync(new UPath(PATH_FORMAT, localPath), cancellation);
             }
         }
 
@@ -99,17 +110,13 @@ namespace YandexDiskPublicAPI
             throw new NotImplementedException();
         }
 
-        async Task<IDirectoryAccessor> IDirectoryAccessor.GetDirectoryAsync(Uri relativePath, System.Threading.CancellationToken cancellation)
+        async Task<IDirectoryAccessor> IDirectoryAccessor.GetDirectoryAsync(UPath relativePath, System.Threading.CancellationToken cancellation)
         {
             return await GetDirectoryAsync(relativePath, cancellation);
         }
-        public async Task<YandexDiskDirectory> GetDirectoryAsync(Uri relativePath, System.Threading.CancellationToken cancellation)
+        public async Task<YandexDiskDirectory> GetDirectoryAsync(UPath relativePath, System.Threading.CancellationToken cancellation)
         {
-            var path = _rawData.path + relativePath.ToString();
-            if (path.Contains("//"))
-            {
-                throw new ArgumentOutOfRangeException("Path is not valid");
-            }
+            var path = _path.GetCopy().AppendSelf(relativePath).ToString();
             var answer = await YandexDisk.PerformListRequestAsync(_publicUrl, path, cancellation);
 
             return new YandexDiskDirectory(answer, _publicUrl);
